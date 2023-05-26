@@ -3,7 +3,7 @@ import argparse
 import imageio
 import numpy as np
 
-import crafter
+import expanded_crafter
 
 
 def main():

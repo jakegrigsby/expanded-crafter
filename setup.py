@@ -3,14 +3,14 @@ import pathlib
 
 
 setuptools.setup(
-    name='crafter',
-    version='1.8.1',
+    name='expanded_crafter',
+    version='0.1',
     description='Open world survival game for reinforcement learning.',
     url='http://github.com/danijar/crafter',
     long_description=pathlib.Path('README.md').read_text(),
     long_description_content_type='text/markdown',
-    packages=['crafter'],
-    package_data={'crafter': ['data.yaml', 'assets/*']},
+    packages=['expanded_crafter'],
+    package_data={'expanded_crafter': ['data.yaml', 'assets/*']},
     entry_points={'console_scripts': ['crafter=crafter.run_gui:main']},
     install_requires=[
         'numpy', 'imageio', 'pillow', 'opensimplex', 'ruamel.yaml',

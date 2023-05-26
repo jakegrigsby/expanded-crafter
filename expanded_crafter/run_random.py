@@ -4,7 +4,7 @@ import time
 
 import numpy as np
 
-import crafter
+import expanded_crafter
 
 
 def main():
@@ -18,10 +18,10 @@ def main():
   args = parser.parse_args()
 
   random = np.random.RandomState(args.seed)
-  crafter.constants.items['health']['max'] = args.health
-  crafter.constants.items['health']['initial'] = args.health
-  env = crafter.Env(area=args.area, length=args.length, seed=args.seed)
-  env = crafter.Recorder(env, args.record)
+  expanded_crafter.constants.items['health']['max'] = args.health
+  expanded_crafter.constants.items['health']['initial'] = args.health
+  env = expanded_crafter.Env(area=args.area, length=args.length, seed=args.seed)
+  env = expanded_crafter.Recorder(env, args.record)
 
   for _ in range(args.episodes):
 

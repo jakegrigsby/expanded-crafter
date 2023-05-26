@@ -8,7 +8,7 @@ except ImportError:
   raise
 from PIL import Image
 
-import crafter
+import expanded_crafter
 
 
 def main():
