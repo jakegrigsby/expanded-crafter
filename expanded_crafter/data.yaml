@@ -23,6 +23,7 @@ materials:
   - stone
   - path
   - sand
+  - snow
   - tree
   - lava
   - coal
@@ -35,6 +36,7 @@ walkable:
   - grass
   - path
   - sand
+  - snow
 
 items:
   health: {max: 9, initial: 9}
