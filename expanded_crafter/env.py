@@ -59,6 +59,7 @@ class Env(BaseClass):
                 objects.Skeleton,
                 objects.Arrow,
                 objects.Plant,
+                objects.Pig,
             ],
         )
         self._step = None

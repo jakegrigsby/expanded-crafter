@@ -212,6 +212,12 @@ class Player(Object):
                 # TODO: Keep track of previous inventory state to do this in a more
                 # general way.
                 self._hunger = 0
+        if isinstance(obj, Pig):
+            obj.health -= damage
+            if obj.health <= 0:
+                self.inventory["food"] += 4
+                self.achievements["eat_pig"] += 1
+                self._hunger = 0
 
     def _do_material(self, target, material):
         if material == "water":
@@ -278,6 +284,32 @@ class Cow(Object):
         if self.random.uniform() < 0.5:
             direction = self.random_dir()
             self.move(direction)
+
+
+class Pig(Object):
+    def __init__(self, world, pos):
+        super().__init__(world, pos)
+        self.health = 5
+        self._last_dir = None
+
+    @property
+    def texture(self):
+        return "pig"
+
+    def update(self):
+        if self.health <= 0:
+            self.world.remove(self)
+        if self.random.uniform() < 0.4:
+            if self._last_dir is None:
+                direction = self.random_dir()
+            else:
+                direction = (
+                    self._last_dir
+                    if self.random.uniform() < 0.75
+                    else self.random_dir()
+                )
+            self.move(direction)
+            self._last_dir = direction
 
 
 class Zombie(Object):
@@ -402,7 +434,7 @@ class Plant(Object):
     def update(self):
         self.grown += 1
         objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
-        if any(isinstance(obj, (Zombie, Skeleton, Cow)) for obj in objs):
+        if any(isinstance(obj, (Zombie, Skeleton, Cow, Pig)) for obj in objs):
             self.health -= 1
         if self.health <= 0:
             self.world.remove(self)
