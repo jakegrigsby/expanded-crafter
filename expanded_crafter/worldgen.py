@@ -140,6 +140,8 @@ def _set_object(world, pos, player, tunnels):
         world.add(objects.Cow(world, (x, y)))
     elif dist > 3 and material == "grass" and uniform() > 0.99:
         world.add(objects.Pig(world, (x, y)))
+    elif dist > 5 and material == "sand" and uniform() > 0.99:
+        world.add(objects.Camel(world, (x, y)))
     elif dist > 3 and material == "snow" and uniform() > 0.99:
         world.add(objects.Penguin(world, (x, y)))
     elif dist > 10 and uniform() > 0.993:

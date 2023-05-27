@@ -60,6 +60,7 @@ class Env(BaseClass):
                 objects.Arrow,
                 objects.Plant,
                 objects.Pig,
+                objects.Camel,
                 objects.Moose,
                 objects.Penguin,
                 objects.BrownBear,

@@ -346,6 +346,19 @@ class Pig(FriendlyMob):
         )
 
 
+class Camel(FriendlyMob):
+    def __init__(self, world, pos):
+        super().__init__(
+            world,
+            pos,
+            texture="camel",
+            health=4,
+            sense_of_a_straight_line=0.95,
+            antsy=0.5,
+            food_value=3,
+        )
+
+
 class NeutralMob(Object):
     def __init__(
         self,
