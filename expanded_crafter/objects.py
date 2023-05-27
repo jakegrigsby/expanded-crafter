@@ -225,6 +225,13 @@ class Player(Object):
                 self.inventory["food"] += 8
                 self.achievements["eat_moose"] += 1
                 self._hunger = 0
+        if isinstance(obj, BrownBear):
+            obj.health -= damage
+            obj.angry = True
+            if obj.health <= 0:
+                self.inventory["food"] += 9
+                self.achievements["eat_brownbear"] += 1
+                self._hunger = 0
         if isinstance(obj, Penguin):
             obj.health -= damage
             if obj.health <= 0:
@@ -282,61 +289,103 @@ class Player(Object):
         self.achievements[f"make_{name}"] += 1
 
 
-class Cow(Object):
-    def __init__(self, world, pos):
+class FriendlyMob(Object):
+    def __init__(self, world, pos, texture, health, sense_of_a_straight_line, antsy):
         super().__init__(world, pos)
-        self.health = 3
-
-    @property
-    def texture(self):
-        return "cow"
-
-    def update(self):
-        if self.health <= 0:
-            self.world.remove(self)
-        if self.random.uniform() < 0.5:
-            direction = self.random_dir()
-            self.move(direction)
-
-
-class Penguin(Object):
-    def __init__(self, world, pos):
-        super().__init__(world, pos)
-        self.health = 2
-
-    @property
-    def texture(self):
-        return "penguin"
-
-    def update(self):
-        if self.health <= 0:
-            self.world.remove(self)
-        if self.random.uniform() < 0.8:
-            direction = self.random_dir()
-            self.move(direction)
-
-
-class Pig(Object):
-    def __init__(self, world, pos):
-        super().__init__(world, pos)
-        self.health = 5
+        self.health = health
+        self.sosa = sense_of_a_straight_line
+        self.antsy = antsy
+        self._texture = texture
         self._last_dir = None
 
     @property
     def texture(self):
-        return "pig"
+        return self._texture
 
     def update(self):
         if self.health <= 0:
             self.world.remove(self)
-        if self.random.uniform() < 0.4:
+        if self.random.uniform() < self.antsy:
             if self._last_dir is None:
                 direction = self.random_dir()
             else:
                 direction = (
                     self._last_dir
-                    if self.random.uniform() < 0.75
+                    if self.random.uniform() < self.sosa
                     else self.random_dir()
+                )
+            self.move(direction)
+            self._last_dir = direction
+
+
+class Cow(FriendlyMob):
+    def __init__(self, world, pos):
+        super().__init__(
+            world, pos, texture="cow", health=3, sense_of_a_straight_line=0.0, antsy=0.5
+        )
+
+
+class Penguin(FriendlyMob):
+    def __init__(self, world, pos):
+        super().__init__(
+            world,
+            pos,
+            texture="penguin",
+            health=2,
+            sense_of_a_straight_line=0.0,
+            antsy=0.8,
+        )
+
+
+class Pig(FriendlyMob):
+    def __init__(self, world, pos):
+        super().__init__(
+            world,
+            pos,
+            texture="pig",
+            health=5,
+            sense_of_a_straight_line=0.75,
+            antsy=0.4,
+        )
+
+
+class BrownBear(Object):
+    def __init__(self, world, pos, player):
+        super().__init__(world, pos)
+        self.player = player
+        self.health = 10
+        self._last_dir = None
+        self.angry = False
+        self.cooldown = 0
+
+    @property
+    def texture(self):
+        return "brownbear"
+
+    def update(self):
+        if self.health <= 0:
+            self.world.remove(self)
+        dist = self.distance(self.player)
+        if self.angry and dist < 25:
+            # attack
+            self.move(self.toward(self.player, self.random.uniform() < 0.8))
+            if dist <= 1:
+                if self.cooldown:
+                    self.cooldown -= 1
+                else:
+                    damage = 8 if self.player.sleeping else 4
+                    self.player.health -= damage
+                    self.cooldown = 4
+        elif self.angry and dist > 25:
+            # territory defended
+            self.angry = False
+        elif self.random.uniform() < 0.2:
+            # move somewhat predictably
+            if self._last_dir is None:
+                direction = self.random_dir()
+            else:
+                direction = (
+                    self._last_dir if self.random.uniform() < 0.9 else self.random_dir()
                 )
             self.move(direction)
             self._last_dir = direction
@@ -507,7 +556,7 @@ class Plant(Object):
         self.grown += 1
         objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
         if any(
-            isinstance(obj, (Zombie, Skeleton, Cow, Pig, Moose, Penguin))
+            isinstance(obj, (Zombie, Skeleton, Cow, Pig, Moose, Penguin, BrownBear))
             for obj in objs
         ):
             self.health -= 1

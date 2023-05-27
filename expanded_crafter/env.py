@@ -62,6 +62,7 @@ class Env(BaseClass):
                 objects.Pig,
                 objects.Moose,
                 objects.Penguin,
+                objects.BrownBear,
             ],
         )
         self._step = None
@@ -230,6 +231,18 @@ class Env(BaseClass):
             0.01,
             0.1,
             lambda pos: objects.Penguin(self._world, pos),
+            lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+        )
+        self._balance_object(
+            chunk,
+            objs,
+            objects.BrownBear,
+            "grass",
+            5,
+            5,
+            0.01,
+            0.1,
+            lambda pos: objects.BrownBear(self._world, pos, self._player),
             lambda num, space: (0 if space < 30 else 1, 1.5 + light),
         )
 
