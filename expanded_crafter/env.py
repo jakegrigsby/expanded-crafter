@@ -61,6 +61,7 @@ class Env(BaseClass):
                 objects.Plant,
                 objects.Pig,
                 objects.Moose,
+                objects.Penguin,
             ],
         )
         self._step = None
@@ -192,6 +193,43 @@ class Env(BaseClass):
             0.01,
             0.1,
             lambda pos: objects.Cow(self._world, pos),
+            lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+        )
+        # TODO: need to check all this
+        self._balance_object(
+            chunk,
+            objs,
+            objects.Pig,
+            "grass",
+            5,
+            5,
+            0.01,
+            0.1,
+            lambda pos: objects.Pig(self._world, pos),
+            lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+        )
+        self._balance_object(
+            chunk,
+            objs,
+            objects.Moose,
+            "snow",
+            5,
+            5,
+            0.01,
+            0.1,
+            lambda pos: objects.Moose(self._world, pos, self._player),
+            lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+        )
+        self._balance_object(
+            chunk,
+            objs,
+            objects.Penguin,
+            "snow",
+            5,
+            5,
+            0.01,
+            0.1,
+            lambda pos: objects.Penguin(self._world, pos),
             lambda num, space: (0 if space < 30 else 1, 1.5 + light),
         )
 

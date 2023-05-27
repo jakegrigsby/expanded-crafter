@@ -225,6 +225,12 @@ class Player(Object):
                 self.inventory["food"] += 8
                 self.achievements["eat_moose"] += 1
                 self._hunger = 0
+        if isinstance(obj, Penguin):
+            obj.health -= damage
+            if obj.health <= 0:
+                self.inventory["food"] += 1
+                self.achievements["eat_penguin"] += 1
+                self._hunger = 0
 
     def _do_material(self, target, material):
         if material == "water":
@@ -289,6 +295,23 @@ class Cow(Object):
         if self.health <= 0:
             self.world.remove(self)
         if self.random.uniform() < 0.5:
+            direction = self.random_dir()
+            self.move(direction)
+
+
+class Penguin(Object):
+    def __init__(self, world, pos):
+        super().__init__(world, pos)
+        self.health = 2
+
+    @property
+    def texture(self):
+        return "penguin"
+
+    def update(self):
+        if self.health <= 0:
+            self.world.remove(self)
+        if self.random.uniform() < 0.8:
             direction = self.random_dir()
             self.move(direction)
 
@@ -483,7 +506,10 @@ class Plant(Object):
     def update(self):
         self.grown += 1
         objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
-        if any(isinstance(obj, (Zombie, Skeleton, Cow, Pig, Moose)) for obj in objs):
+        if any(
+            isinstance(obj, (Zombie, Skeleton, Cow, Pig, Moose, Penguin))
+            for obj in objs
+        ):
             self.health -= 1
         if self.health <= 0:
             self.world.remove(self)
