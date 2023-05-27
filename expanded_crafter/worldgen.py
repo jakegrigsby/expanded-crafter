@@ -146,8 +146,10 @@ def _set_object(world, pos, player, tunnels):
         world.add(objects.Zombie(world, (x, y), player))
     elif dist > 10 and material == "snow" and uniform() > 0.997:
         world.add(objects.Moose(world, (x, y), player))
-    elif dist > 10 and material == "grass" and uniform() > 0.995:
+    elif dist > 10 and material == "grass" and uniform() > 0.998:
         world.add(objects.BrownBear(world, (x, y), player))
+    elif dist > 10 and material == "snow" and uniform() > 0.9985:
+        world.add(objects.PolarBear(world, (x, y), player))
     elif material == "path" and tunnels[x, y] and uniform() > 0.95:
         world.add(objects.Skeleton(world, (x, y), player))
 

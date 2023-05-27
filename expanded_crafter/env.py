@@ -63,6 +63,7 @@ class Env(BaseClass):
                 objects.Moose,
                 objects.Penguin,
                 objects.BrownBear,
+                objects.PolarBear,
             ],
         )
         self._step = None

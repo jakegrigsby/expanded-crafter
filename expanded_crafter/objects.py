@@ -450,6 +450,24 @@ class BrownBear(NeutralMob):
         )
 
 
+class PolarBear(NeutralMob):
+    def __init__(self, world, pos, player):
+        super().__init__(
+            world,
+            pos,
+            player,
+            texture="polar_bear",
+            sense_of_straight_line=0.65,
+            antsy=0.12,
+            health=11,
+            damage=6,
+            cooldown=3,
+            pursuit_distance=20,
+            pursuit_long_axis=0.8,
+            food_value=9,
+        )
+
+
 class Zombie(Object):
     def __init__(self, world, pos, player):
         super().__init__(world, pos)
