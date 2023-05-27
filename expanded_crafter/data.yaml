@@ -24,6 +24,7 @@ materials:
   - path
   - sand
   - snow
+  - flower
   - mud
   - ice
   - tree
@@ -37,6 +38,7 @@ materials:
   - emerald
   - table
   - furnace
+  - pyramid
 
 walkable:
   - grass
@@ -45,6 +47,7 @@ walkable:
   - snow
   - mud
   - ice
+  - flower
 
 items:
   health: {max: 9, initial: 9}

@@ -25,9 +25,10 @@ def main():
         gold = env._world.count("gold")
         emerald = env._world.count("emerald")
         diamonds = env._world.count("diamond")
+        pyramids = env._world.count("pyramid")
 
         print(
-            f"Map: {index:>2}, diamonds: {diamonds:>2}, iron: {iron:>2}, gold: {gold:>2}, emerald: {emerald:>2}, coal: {coal:>2}"
+            f"Map: {index:>2}, diamonds: {diamonds:>2}, iron: {iron:>2}, gold: {gold:>2}, emerald: {emerald:>2}, coal: {coal:>2}, pyramid: {pyramids:>2}"
         )
 
     max_worlds_per_col = 4
