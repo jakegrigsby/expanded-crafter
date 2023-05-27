@@ -23,6 +23,7 @@ materials:
   - stone
   - path
   - sand
+  - beach
   - snow
   - flower
   - mud
@@ -45,6 +46,7 @@ walkable:
   - path
   - sand
   - snow
+  - beach
   - mud
   - ice
   - flower

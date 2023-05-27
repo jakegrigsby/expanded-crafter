@@ -102,7 +102,7 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
         elif poles[x, y] and y > world.area[1] // 2:
             world[x, y] = "mud"
         else:
-            world[x, y] = "sand"
+            world[x, y] = "beach"
     elif water_threshold < water:
         world[x, y] = "water"
     else:  # normal terrain
