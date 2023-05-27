@@ -204,19 +204,11 @@ class Player(Object):
             obj.health -= damage
             if obj.health <= 0:
                 self.achievements["defeat_skeleton"] += 1
-        if isinstance(obj, Cow):
+        if isinstance(obj, FriendlyMob):
             obj.health -= damage
             if obj.health <= 0:
-                self.inventory["food"] += 6
-                self.achievements["eat_cow"] += 1
-                # TODO: Keep track of previous inventory state to do this in a more
-                # general way.
-                self._hunger = 0
-        if isinstance(obj, Pig):
-            obj.health -= damage
-            if obj.health <= 0:
-                self.inventory["food"] += 4
-                self.achievements["eat_pig"] += 1
+                self.inventory["food"] += obj.food_value
+                self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
         if isinstance(obj, Moose):
             obj.health -= damage
@@ -231,12 +223,6 @@ class Player(Object):
             if obj.health <= 0:
                 self.inventory["food"] += 9
                 self.achievements["eat_brownbear"] += 1
-                self._hunger = 0
-        if isinstance(obj, Penguin):
-            obj.health -= damage
-            if obj.health <= 0:
-                self.inventory["food"] += 1
-                self.achievements["eat_penguin"] += 1
                 self._hunger = 0
 
     def _do_material(self, target, material):
@@ -290,11 +276,21 @@ class Player(Object):
 
 
 class FriendlyMob(Object):
-    def __init__(self, world, pos, texture, health, sense_of_a_straight_line, antsy):
+    def __init__(
+        self,
+        world,
+        pos,
+        texture: str,
+        health: int,
+        sense_of_a_straight_line: float,
+        antsy: float,
+        food_value: int,
+    ):
         super().__init__(world, pos)
         self.health = health
         self.sosa = sense_of_a_straight_line
         self.antsy = antsy
+        self.food_value = food_value
         self._texture = texture
         self._last_dir = None
 
@@ -321,7 +317,13 @@ class FriendlyMob(Object):
 class Cow(FriendlyMob):
     def __init__(self, world, pos):
         super().__init__(
-            world, pos, texture="cow", health=3, sense_of_a_straight_line=0.0, antsy=0.5
+            world,
+            pos,
+            texture="cow",
+            health=3,
+            sense_of_a_straight_line=0.0,
+            antsy=0.5,
+            food_value=6,
         )
 
 
@@ -334,6 +336,7 @@ class Penguin(FriendlyMob):
             health=2,
             sense_of_a_straight_line=0.0,
             antsy=0.8,
+            food_value=2,
         )
 
 
@@ -346,6 +349,7 @@ class Pig(FriendlyMob):
             health=5,
             sense_of_a_straight_line=0.75,
             antsy=0.4,
+            food_value=4,
         )
 
 
@@ -556,7 +560,7 @@ class Plant(Object):
         self.grown += 1
         objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
         if any(
-            isinstance(obj, (Zombie, Skeleton, Cow, Pig, Moose, Penguin, BrownBear))
+            isinstance(obj, (Zombie, Skeleton, FriendlyMob, Moose, BrownBear))
             for obj in objs
         ):
             self.health -= 1

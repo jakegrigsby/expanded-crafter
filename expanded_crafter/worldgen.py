@@ -67,7 +67,9 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
     shore_threshold = 0.05 * (1.0 + water_coeff * water_pos)
 
     # makes region right by spawn grass
-    if mountain > 0.15:
+    if start > 0.5:
+        world[x, y] = "grass"
+    elif mountain > 0.15:
         if simplex(x, y, 6, 7) > 0.15 and mountain > 0.3:  # cave
             world[x, y] = "path"
         elif simplex(2 * x, y / 5, 7, 3) > 0.4:  # horizonal tunnle
