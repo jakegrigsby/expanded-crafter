@@ -33,6 +33,8 @@ materials:
   - coal
   - iron
   - diamond
+  - gold
+  - emerald
   - table
   - furnace
 

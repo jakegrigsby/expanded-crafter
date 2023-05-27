@@ -20,8 +20,15 @@ def main():
     images = []
     for index in range(args.amount):
         images.append(env.reset())
+        coal = env._world.count("coal")
+        iron = env._world.count("iron")
+        gold = env._world.count("gold")
+        emerald = env._world.count("emerald")
         diamonds = env._world.count("diamond")
-        print(f"Map: {index:>2}, diamonds: {diamonds:>2}")
+
+        print(
+            f"Map: {index:>2}, diamonds: {diamonds:>2}, iron: {iron:>2}, gold: {gold:>2}, emerald: {emerald:>2}, coal: {coal:>2}"
+        )
 
     max_worlds_per_col = 4
     rows = max(len(images) // max_worlds_per_col, 1)
