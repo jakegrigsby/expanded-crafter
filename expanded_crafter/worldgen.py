@@ -11,30 +11,39 @@ from . import objects
 def generate_world(world, player):
     simplex = opensimplex.OpenSimplex(seed=world.random.randint(0, 2**31 - 1))
     tunnels = np.zeros(world.area, bool)
+    poles = np.zeros(world.area, bool)
+    world_x, world_y = world.area
+
+    north_pole = world.random.uniform(world_y / 8, world_y / 4)
+    south_pole = world.random.uniform((6.0 * world_y) / 8, world_y)
+    for y in range(poles.shape[1]):
+        poles[y, : int(north_pole)] = True
+        poles[y, int(south_pole) :] = True
+        north_pole = max(north_pole + world.random.normal(0), 1)
+        south_pole = min(south_pole + world.random.normal(0), world_y - 1)
+
     starts = np.zeros((world.area[0], world.area[1]))
     water = np.zeros((world.area[0], world.area[1]))
     mountain = np.zeros((world.area[0], world.area[1]))
-    desert = np.zeros((world.area[0], world.area[1]))
-    snow = np.zeros((world.area[0], world.area[1]))
     for x in range(world.area[0]):
         for y in range(world.area[1]):
-            start_x_y, mtn_x_y, water_x_y, desert_x_y, snow_x_y = _set_material(
-                world, (x, y), player, tunnels, simplex
+            start_x_y, mtn_x_y, water_x_y = _set_material(
+                world,
+                (x, y),
+                player,
+                tunnels,
+                poles,
+                simplex,
             )
             starts[x, y] = start_x_y
             mountain[x, y] = mtn_x_y
             water[x, y] = water_x_y
-            desert[x, y] = desert_x_y
-            snow[x, y] = snow_x_y
     for x in range(world.area[0]):
         for y in range(world.area[1]):
             _set_object(world, (x, y), player, tunnels)
 
-    plt.imshow(desert)
-    plt.show()
 
-
-def _set_material(world, pos, player, tunnels, simplex):
+def _set_material(world, pos, player, tunnels, poles, simplex):
     x, y = pos
     simplex = functools.partial(_simplex, simplex)
     uniform = world.random.uniform
@@ -50,17 +59,8 @@ def _set_material(world, pos, player, tunnels, simplex):
     mountain = simplex(x, y, 0, {15: 1, 5: 0.3})
     mountain -= 4 * start + 0.3 * water
 
-    # needs tuning
-    desert = simplex(x, y, 2, {50: 1, 20: 0.5, 5: 0.15})
-    desert -= 2 * start
-    snow = simplex(x, y, 4, {50: 1, 20: 0.5, 5: 0.15})
-    snow -= 2 * start
-
     # makes region right by spawn grass
-    if start > 0.5:
-        world[x, y] = "grass"
-
-    elif mountain > 0.15:
+    if mountain > 0.15:
         if simplex(x, y, 6, 7) > 0.15 and mountain > 0.3:  # cave
             world[x, y] = "path"
         elif simplex(2 * x, y / 5, 7, 3) > 0.4:  # horizonal tunnle
@@ -83,17 +83,18 @@ def _set_material(world, pos, player, tunnels, simplex):
         world[x, y] = "sand"
     elif 0.3 < water:
         world[x, y] = "water"
-    elif 0.2 < desert:
-        world[x, y] = "sand"
-    elif 0.2 < snow:
-        world[x, y] = "snow"
-    else:  # grassland
-        if simplex(x, y, 5, 7) > 0 and uniform() > 0.8:
-            world[x, y] = "tree"
+    else:  # normal terrain
+        if poles[x, y] and y < world.area[1] // 2:
+            world[x, y] = "snow"
+        elif poles[x, y] and y > world.area[1] // 2:
+            world[x, y] = "sand"
         else:
-            world[x, y] = "grass"
+            if simplex(x, y, 5, 7) > 0 and uniform() > 0.8:
+                world[x, y] = "tree"
+            else:
+                world[x, y] = "grass"
 
-    return start, mountain, water, desert, snow
+    return start, mountain, water
 
 
 def _set_object(world, pos, player, tunnels):
