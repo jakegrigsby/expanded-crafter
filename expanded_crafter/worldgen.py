@@ -25,9 +25,10 @@ def generate_world(world, player):
     starts = np.zeros((world.area[0], world.area[1]))
     water = np.zeros((world.area[0], world.area[1]))
     mountain = np.zeros((world.area[0], world.area[1]))
+    water_threshold = np.zeros((world.area[0], world.area[1]))
     for x in range(world.area[0]):
         for y in range(world.area[1]):
-            start_x_y, mtn_x_y, water_x_y = _set_material(
+            start_x_y, mtn_x_y, water_x_y, water_threshold_x_y = _set_material(
                 world,
                 (x, y),
                 player,
@@ -38,6 +39,7 @@ def generate_world(world, player):
             starts[x, y] = start_x_y
             mountain[x, y] = mtn_x_y
             water[x, y] = water_x_y
+            water_threshold[x, y] = water_threshold_x_y
     for x in range(world.area[0]):
         for y in range(world.area[1]):
             _set_object(world, (x, y), player, tunnels)
@@ -59,6 +61,11 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
     mountain = simplex(x, y, 0, {15: 1, 5: 0.3})
     mountain -= 4 * start + 0.3 * water
 
+    water_coeff = world.random.uniform(0.5, 1.5)
+    water_pos = abs(y - player.pos[1]) / world.area[1]
+    water_threshold = 0.3 * (1.0 + water_coeff * water_pos)
+    shore_threshold = 0.05 * (1.0 + water_coeff * water_pos)
+
     # makes region right by spawn grass
     if mountain > 0.15:
         if simplex(x, y, 6, 7) > 0.15 and mountain > 0.3:  # cave
@@ -79,22 +86,37 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
             world[x, y] = "lava"
         else:
             world[x, y] = "stone"
-    elif 0.25 < water <= 0.35 and simplex(x, y, 4, 9) > -0.2:
-        world[x, y] = "sand"
-    elif 0.3 < water:
+
+    elif (
+        water_threshold - shore_threshold < water <= water_threshold + shore_threshold
+        and simplex(x, y, 4, 9) > -0.2
+    ):
+        if poles[x, y] and y < world.area[1] // 2:
+            world[x, y] = "ice"
+        elif poles[x, y] and y > world.area[1] // 2:
+            world[x, y] = "mud"
+        else:
+            world[x, y] = "sand"
+    elif water_threshold < water:
         world[x, y] = "water"
     else:  # normal terrain
         if poles[x, y] and y < world.area[1] // 2:
-            world[x, y] = "snow"
+            if simplex(x, y, 5, 7) > 0 and uniform() > 0.9:
+                world[x, y] = "pinetree"
+            else:
+                world[x, y] = "snow"
         elif poles[x, y] and y > world.area[1] // 2:
-            world[x, y] = "sand"
+            if simplex(x, y, 5, 7) > 0 and uniform() > 0.9:
+                world[x, y] = "cactus"
+            else:
+                world[x, y] = "sand"
         else:
             if simplex(x, y, 5, 7) > 0 and uniform() > 0.8:
                 world[x, y] = "tree"
             else:
                 world[x, y] = "grass"
 
-    return start, mountain, water
+    return start, mountain, water, water_threshold
 
 
 def _set_object(world, pos, player, tunnels):

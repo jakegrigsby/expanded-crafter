@@ -27,6 +27,8 @@ materials:
   - mud
   - ice
   - tree
+  - cactus
+  - pinetree
   - lava
   - coal
   - iron
