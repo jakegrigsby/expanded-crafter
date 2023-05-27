@@ -210,19 +210,12 @@ class Player(Object):
                 self.inventory["food"] += obj.food_value
                 self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
-        if isinstance(obj, Moose):
+        if isinstance(obj, NeutralMob):
             obj.health -= damage
             obj.angry = True
             if obj.health <= 0:
-                self.inventory["food"] += 8
-                self.achievements["eat_moose"] += 1
-                self._hunger = 0
-        if isinstance(obj, BrownBear):
-            obj.health -= damage
-            obj.angry = True
-            if obj.health <= 0:
-                self.inventory["food"] += 9
-                self.achievements["eat_brownbear"] += 1
+                self.inventory["food"] += obj.food_value
+                self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
 
     def _do_material(self, target, material):
@@ -353,88 +346,108 @@ class Pig(FriendlyMob):
         )
 
 
-class BrownBear(Object):
-    def __init__(self, world, pos, player):
+class NeutralMob(Object):
+    def __init__(
+        self,
+        world,
+        pos,
+        player,
+        texture: str,
+        sense_of_straight_line: float,
+        antsy: float,
+        health: int,
+        damage: int,
+        cooldown: int,
+        pursuit_distance: int,
+        pursuit_long_axis: float,
+        food_value: int,
+    ):
         super().__init__(world, pos)
         self.player = player
-        self.health = 10
+        self._texture = texture
+        self.sosa = sense_of_straight_line
+        self.antsy = antsy
+        self.health = health
+        self.damage = damage
+        self.cooldown = cooldown
+        self._cur_cooldown = 0
+        self.pursuit_distance = pursuit_distance
+        self.pursuit_long_axis = pursuit_long_axis
+        self.food_value = food_value
         self._last_dir = None
         self.angry = False
-        self.cooldown = 0
 
     @property
     def texture(self):
-        return "brownbear"
+        return self._texture
 
     def update(self):
         if self.health <= 0:
             self.world.remove(self)
         dist = self.distance(self.player)
-        if self.angry and dist < 25:
+        if self.angry and dist < self.pursuit_distance:
             # attack
-            self.move(self.toward(self.player, self.random.uniform() < 0.8))
+            self.move(
+                self.toward(self.player, self.random.uniform() < self.pursuit_long_axis)
+            )
             if dist <= 1:
-                if self.cooldown:
-                    self.cooldown -= 1
+                if self._cur_cooldown:
+                    self._cur_cooldown -= 1
                 else:
-                    damage = 8 if self.player.sleeping else 4
+                    damage = 2 * self.damage if self.player.sleeping else self.damage
                     self.player.health -= damage
-                    self.cooldown = 4
-        elif self.angry and dist > 25:
+                    self._cur_cooldown = self.cooldown
+        elif self.angry and dist > self.pursuit_distance:
             # territory defended
             self.angry = False
-        elif self.random.uniform() < 0.2:
+        elif self.random.uniform() < self.antsy:
             # move somewhat predictably
             if self._last_dir is None:
                 direction = self.random_dir()
             else:
                 direction = (
-                    self._last_dir if self.random.uniform() < 0.9 else self.random_dir()
+                    self._last_dir
+                    if self.random.uniform() < self.sosa
+                    else self.random_dir()
                 )
             self.move(direction)
             self._last_dir = direction
 
 
-class Moose(Object):
+class Moose(NeutralMob):
     def __init__(self, world, pos, player):
-        super().__init__(world, pos)
-        self.player = player
-        self.health = 8
-        self._last_dir = None
-        self.angry = False
-        self.cooldown = 0
+        super().__init__(
+            world,
+            pos,
+            player,
+            texture="moose",
+            sense_of_straight_line=0.8,
+            antsy=0.2,
+            health=8,
+            damage=2,
+            cooldown=3,
+            pursuit_distance=15,
+            pursuit_long_axis=0.7,
+            food_value=8,
+        )
 
-    @property
-    def texture(self):
-        return "moose"
 
-    def update(self):
-        if self.health <= 0:
-            self.world.remove(self)
-        dist = self.distance(self.player)
-        if self.angry and dist < 20:
-            # attack
-            self.move(self.toward(self.player, self.random.uniform() < 0.7))
-            if dist <= 1:
-                if self.cooldown:
-                    self.cooldown -= 1
-                else:
-                    damage = 5 if self.player.sleeping else 1
-                    self.player.health -= damage
-                    self.cooldown = 3
-        elif self.angry and dist > 20:
-            # territory defended
-            self.angry = False
-        elif self.random.uniform() < 0.4:
-            # move somewhat predictably
-            if self._last_dir is None:
-                direction = self.random_dir()
-            else:
-                direction = (
-                    self._last_dir if self.random.uniform() < 0.8 else self.random_dir()
-                )
-            self.move(direction)
-            self._last_dir = direction
+class BrownBear(NeutralMob):
+    def __init__(self, world, pos, player):
+        super().__init__(
+            world,
+            pos,
+            player,
+            texture="brown_bear",
+            sense_of_straight_line=0.7,
+            antsy=0.1,
+            health=10,
+            damage=5,
+            cooldown=4,
+            pursuit_distance=25,
+            pursuit_long_axis=0.8,
+            food_value=9,
+        )
 
 
 class Zombie(Object):
@@ -560,8 +573,7 @@ class Plant(Object):
         self.grown += 1
         objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
         if any(
-            isinstance(obj, (Zombie, Skeleton, FriendlyMob, Moose, BrownBear))
-            for obj in objs
+            isinstance(obj, (Zombie, Skeleton, FriendlyMob, NeutralMob)) for obj in objs
         ):
             self.health -= 1
         if self.health <= 0:
