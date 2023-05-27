@@ -218,6 +218,13 @@ class Player(Object):
                 self.inventory["food"] += 4
                 self.achievements["eat_pig"] += 1
                 self._hunger = 0
+        if isinstance(obj, Moose):
+            obj.health -= damage
+            obj.angry = True
+            if obj.health <= 0:
+                self.inventory["food"] += 8
+                self.achievements["eat_moose"] += 1
+                self._hunger = 0
 
     def _do_material(self, target, material):
         if material == "water":
@@ -307,6 +314,48 @@ class Pig(Object):
                     self._last_dir
                     if self.random.uniform() < 0.75
                     else self.random_dir()
+                )
+            self.move(direction)
+            self._last_dir = direction
+
+
+class Moose(Object):
+    def __init__(self, world, pos, player):
+        super().__init__(world, pos)
+        self.player = player
+        self.health = 8
+        self._last_dir = None
+        self.angry = False
+        self.cooldown = 0
+
+    @property
+    def texture(self):
+        return "moose"
+
+    def update(self):
+        if self.health <= 0:
+            self.world.remove(self)
+        dist = self.distance(self.player)
+        if self.angry and dist < 20:
+            # attack
+            self.move(self.toward(self.player, self.random.uniform() < 0.7))
+            if dist <= 1:
+                if self.cooldown:
+                    self.cooldown -= 1
+                else:
+                    damage = 5 if self.player.sleeping else 1
+                    self.player.health -= damage
+                    self.cooldown = 3
+        elif self.angry and dist > 20:
+            # territory defended
+            self.angry = False
+        elif self.random.uniform() < 0.4:
+            # move somewhat predictably
+            if self._last_dir is None:
+                direction = self.random_dir()
+            else:
+                direction = (
+                    self._last_dir if self.random.uniform() < 0.8 else self.random_dir()
                 )
             self.move(direction)
             self._last_dir = direction
@@ -434,7 +483,7 @@ class Plant(Object):
     def update(self):
         self.grown += 1
         objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
-        if any(isinstance(obj, (Zombie, Skeleton, Cow, Pig)) for obj in objs):
+        if any(isinstance(obj, (Zombie, Skeleton, Cow, Pig, Moose)) for obj in objs):
             self.health -= 1
         if self.health <= 0:
             self.world.remove(self)
