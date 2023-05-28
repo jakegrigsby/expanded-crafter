@@ -171,12 +171,12 @@ class Env(BaseClass):
             material="grass",
             span_dist=6,
             despan_dist=0,
-            spawn_prob=0.3,
+            spawn_prob=0.2,
             despawn_prob=0.4,
             ctor=lambda pos: objects.Zombie(self._world, pos, self._player),
             target_fn=lambda num, space: (
-                0 if space < 50 else 3.5 - 3 * light,
-                3.5 - 3 * light,
+                1.0 * (light < 0.3) and (space > 30),
+                3.0 * (light < 0.3) and (space > 30),
             ),
         )
         self._balance_object(
@@ -258,10 +258,10 @@ class Env(BaseClass):
             "grass",
             10,
             10,
-            0.01,
-            0.1,
+            0.005,
+            0.08,
             lambda pos: objects.BrownBear(self._world, pos, self._player),
-            lambda num, space: (0 if space < 30 else 1, 1),
+            lambda num, space: (0 if space < 30 else 0, 1),
         )
         self._balance_object(
             chunk,
@@ -270,10 +270,10 @@ class Env(BaseClass):
             "snow",
             10,
             10,
-            0.01,
-            0.1,
+            0.004,
+            0.08,
             lambda pos: objects.PolarBear(self._world, pos, self._player),
-            lambda num, space: (0 if space < 30 else 1, 1),
+            lambda num, space: (0 if space < 30 else 0, 1),
         )
 
     def _balance_object(
