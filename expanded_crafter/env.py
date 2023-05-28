@@ -163,16 +163,19 @@ class Env(BaseClass):
     def _balance_chunk(self, chunk, objs):
         light = self._world.daylight
         self._balance_object(
-            chunk,
-            objs,
-            objects.Zombie,
-            "grass",
-            6,
-            0,
-            0.3,
-            0.4,
-            lambda pos: objects.Zombie(self._world, pos, self._player),
-            lambda num, space: (0 if space < 50 else 3.5 - 3 * light, 3.5 - 3 * light),
+            chunk=chunk,
+            objs=objs,
+            cls=objects.Zombie,
+            material="grass",
+            span_dist=6,
+            despan_dist=0,
+            spawn_prob=0.3,
+            despawn_prob=0.4,
+            ctor=lambda pos: objects.Zombie(self._world, pos, self._player),
+            target_fn=lambda num, space: (
+                0 if space < 50 else 3.5 - 3 * light,
+                3.5 - 3 * light,
+            ),
         )
         self._balance_object(
             chunk,
@@ -198,7 +201,6 @@ class Env(BaseClass):
             lambda pos: objects.Cow(self._world, pos),
             lambda num, space: (0 if space < 30 else 1, 1.5 + light),
         )
-        # TODO: need to check all this
         self._balance_object(
             chunk,
             objs,
@@ -214,38 +216,62 @@ class Env(BaseClass):
         self._balance_object(
             chunk,
             objs,
-            objects.Moose,
-            "snow",
+            objects.Camel,
+            "sand",
             5,
             5,
             0.01,
             0.1,
-            lambda pos: objects.Moose(self._world, pos, self._player),
+            lambda pos: objects.Camel(self._world, pos),
             lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+        )
+        self._balance_object(
+            chunk,
+            objs,
+            objects.Moose,
+            "snow",
+            8,
+            8,
+            0.01,
+            0.1,
+            lambda pos: objects.Moose(self._world, pos, self._player),
+            lambda num, space: (0 if space < 30 else 1, 2.0),
         )
         self._balance_object(
             chunk,
             objs,
             objects.Penguin,
             "snow",
-            5,
-            5,
+            4,
+            4,
             0.01,
             0.1,
             lambda pos: objects.Penguin(self._world, pos),
-            lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+            lambda num, space: (0 if space < 30 else 1, 2.0 + light),
         )
         self._balance_object(
             chunk,
             objs,
             objects.BrownBear,
             "grass",
-            5,
-            5,
+            10,
+            10,
             0.01,
             0.1,
             lambda pos: objects.BrownBear(self._world, pos, self._player),
-            lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+            lambda num, space: (0 if space < 30 else 1, 1),
+        )
+        self._balance_object(
+            chunk,
+            objs,
+            objects.PolarBear,
+            "snow",
+            10,
+            10,
+            0.01,
+            0.1,
+            lambda pos: objects.PolarBear(self._world, pos, self._player),
+            lambda num, space: (0 if space < 30 else 1, 1),
         )
 
     def _balance_object(
@@ -265,8 +291,10 @@ class Env(BaseClass):
         random = self._world.random
         creatures = [obj for obj in objs if isinstance(obj, cls)]
         mask = self._world.mask(*chunk, material)
+        # range of object counts based on how much space they have to spawn
         target_min, target_max = target_fn(len(creatures), mask.sum())
         if len(creatures) < int(target_min) and random.uniform() < spawn_prob:
+            # spawn new object
             xs = np.tile(np.arange(xmin, xmax)[:, None], [1, ymax - ymin])
             ys = np.tile(np.arange(ymin, ymax)[None, :], [xmax - xmin, 1])
             xs, ys = xs[mask], ys[mask]
@@ -277,7 +305,8 @@ class Env(BaseClass):
             if empty and away:
                 self._world.add(ctor(pos))
         elif len(creatures) > int(target_max) and random.uniform() < despawn_prob:
-            obj = creatures[random.randint(0, len(creatures))]
+            # despawn object
+            obj = random.choice(creatures)
             away = self._player.distance(obj.pos) >= despan_dist
             if away:
                 self._world.remove(obj)
