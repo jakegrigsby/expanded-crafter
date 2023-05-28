@@ -19,6 +19,7 @@ actions:
 
 materials:
   - water
+  - deepwater
   - grass
   - stone
   - path

@@ -64,6 +64,7 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
     water_coeff = world.random.uniform(0.5, 1.5)
     water_pos = abs(y - player.pos[1]) / world.area[1]
     water_threshold = 0.3 * (1.0 + water_coeff * water_pos)
+    deepwater_threshold = water_threshold * 1.9
     shore_threshold = 0.05 * (1.0 + water_coeff * water_pos)
 
     # makes region right by spawn grass
@@ -104,7 +105,10 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
         else:
             world[x, y] = "beach"
     elif water_threshold < water:
-        world[x, y] = "water"
+        if deepwater_threshold < water:
+            world[x, y] = "deepwater"
+        else:
+            world[x, y] = "water"
     else:  # normal terrain
         if poles[x, y] and y < world.area[1] // 2:
             if simplex(x, y, 5, 7) > 0 and uniform() > 0.9:
