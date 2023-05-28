@@ -61,6 +61,8 @@ items:
   stone: {max: 9, initial: 0}
   coal: {max: 9, initial: 0}
   iron: {max: 9, initial: 0}
+  gold: {max: 9, initial: 0}
+  emerald: {max: 9, initial: 0}
   diamond: {max: 9, initial: 0}
   wood_pickaxe: {max: 9, initial: 0}
   stone_pickaxe: {max: 9, initial: 0}
@@ -68,12 +70,15 @@ items:
   wood_sword: {max: 9, initial: 0}
   stone_sword: {max: 9, initial: 0}
   iron_sword: {max: 9, initial: 0}
+  diamond_sword: {max: 9, initial: 0}
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
   stone: {require: {wood_pickaxe: 1}, receive: {stone: 1}, leaves: path}
   coal: {require: {wood_pickaxe: 1}, receive: {coal: 1}, leaves: path}
   iron: {require: {stone_pickaxe: 1}, receive: {iron: 1}, leaves: path}
+  gold: {require: {stone_pickaxe: 1}, receive: {gold: 1}, leaves: path}
+  emerald: {require: {stone_pickaxe: 1}, receive: {emerald: 1}, leaves: path}
   diamond: {require: {iron_pickaxe: 1}, receive: {diamond: 1}, leaves: path}
   water: {require: {}, receive: {drink: 1}, leaves: water}
   grass: {require: {}, receive: {sapling: 1}, probability: 0.1, leaves: grass}
@@ -100,6 +105,8 @@ achievements:
   - collect_sapling
   - collect_stone
   - collect_wood
+  - collect_gold
+  - collect_emerald
   - defeat_skeleton
   - defeat_zombie
   - eat_cow
