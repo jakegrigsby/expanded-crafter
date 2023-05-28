@@ -168,7 +168,7 @@ class Env(BaseClass):
             chunk=chunk,
             objs=objs,
             cls=objects.Zombie,
-            material="grass",
+            material=("grass", "snow", "sand"),
             span_dist=6,
             despan_dist=0,
             spawn_prob=0.2,
@@ -292,7 +292,15 @@ class Env(BaseClass):
         xmin, xmax, ymin, ymax = chunk
         random = self._world.random
         creatures = [obj for obj in objs if isinstance(obj, cls)]
-        mask = self._world.mask(*chunk, material)
+
+        if not isinstance(material, tuple):
+            material = (material,)
+
+        mask = None
+        for material_i in material:
+            mask_i = self._world.mask(*chunk, material_i)
+            mask = mask_i if mask is None else mask | mask_i
+
         # range of object counts based on how much space they have to spawn
         target_min, target_max = target_fn(len(creatures), mask.sum())
         if len(creatures) < int(target_min) and random.uniform() < spawn_prob:

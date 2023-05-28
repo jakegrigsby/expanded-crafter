@@ -57,6 +57,7 @@ items:
   drink: {max: 9, initial: 9}
   energy: {max: 9, initial: 9}
   sapling: {max: 9, initial: 0}
+  cactus_fruit: {max : 9, initial: 0}
   wood: {max: 9, initial: 0}
   stone: {max: 9, initial: 0}
   coal: {max: 9, initial: 0}
@@ -74,6 +75,8 @@ items:
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
+  pinetree: {require: {}, receive: {wood: 1}, leaves: snow}
+  cactus: {require: {}, receive: {cactus_fruit: 1}, leaves: sand}
   stone: {require: {wood_pickaxe: 1}, receive: {stone: 1}, leaves: path}
   coal: {require: {wood_pickaxe: 1}, receive: {coal: 1}, leaves: path}
   iron: {require: {stone_pickaxe: 1}, receive: {iron: 1}, leaves: path}
@@ -84,9 +87,9 @@ collect:
   grass: {require: {}, receive: {sapling: 1}, probability: 0.1, leaves: grass}
 
 place:
-  stone: {uses: {stone: 1}, where: [grass, sand, path, water, lava], type: material}
-  table: {uses: {wood: 2}, where: [grass, sand, path], type: material}
-  furnace: {uses: {stone: 4}, where: [grass, sand, path], type: material}
+  stone: {uses: {stone: 1}, where: [grass, sand, snow, path, water, lava, beach], type: material}
+  table: {uses: {wood: 2}, where: [grass, sand, snow, path, beach], type: material}
+  furnace: {uses: {stone: 4}, where: [grass, sand, snow, path, beach], type: material}
   plant: {uses: {sapling: 1}, where: [grass], type: object}
 
 make:
@@ -107,6 +110,7 @@ achievements:
   - collect_wood
   - collect_gold
   - collect_emerald
+  - collect_cactus_fruit
   - defeat_skeleton
   - defeat_zombie
   - eat_cow
