@@ -130,18 +130,18 @@ class Player(Object):
         self._wake_up_when_hurt()
 
     def _update_life_stats(self):
-        self._hunger += 0.5 if self.sleeping else 1
+        self._hunger += 0.25 if self.sleeping else 0.5
         if self._hunger > 25:
             self._hunger = 0
             self.inventory["food"] -= 1
-        self._thirst += 0.5 if self.sleeping else 1
+        self._thirst += 0.25 if self.sleeping else 0.5
         if self._thirst > 20:
             self._thirst = 0
             self.inventory["drink"] -= 1
         if self.sleeping:
             self._fatigue = min(self._fatigue - 1, 0)
         else:
-            self._fatigue += 1
+            self._fatigue += 0.5
         if self._fatigue < -10:
             self._fatigue = 0
             self.inventory["energy"] += 1
@@ -496,7 +496,7 @@ class Zombie(Object):
         if self.health <= 0:
             self.world.remove(self)
         dist = self.distance(self.player)
-        if dist <= 8 and self.random.uniform() < 0.9:
+        if dist <= 8 and self.random.uniform() < 0.65:
             self.move(self.toward(self.player, self.random.uniform() < 0.8))
         else:
             self.move(self.random_dir())

@@ -155,9 +155,11 @@ class Env(BaseClass):
         return self.render()
 
     def _update_time(self):
-        # https://www.desmos.com/calculator/grfbc6rs3h
-        progress = (self._step / 300) % 1 + 0.3
-        daylight = 1 - np.abs(np.cos(np.pi * progress)) ** 3
+        """
+        changed from crafter default to 1) start at morning 2) have longer days with more sunlight
+        """
+        progress = (self._step / 400) + 0.15
+        daylight = 1 - np.abs(np.cos(np.pi * progress)) ** 4
         self._world.daylight = daylight
 
     def _balance_chunk(self, chunk, objs):
