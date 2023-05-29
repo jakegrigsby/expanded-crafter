@@ -16,6 +16,7 @@ actions:
   - make_wood_sword
   - make_stone_sword
   - make_iron_sword
+  - make_ship
 
 materials:
   - water
@@ -41,6 +42,7 @@ materials:
   - table
   - furnace
   - pyramid
+  - ship
 
 walkable:
   - grass
@@ -73,6 +75,7 @@ items:
   stone_sword: {max: 9, initial: 0}
   iron_sword: {max: 9, initial: 0}
   diamond_sword: {max: 9, initial: 0}
+  ship: {max: 1, initial: 0}
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
@@ -100,6 +103,7 @@ make:
   wood_sword: {uses: {wood: 1}, nearby: [table], gives: 1}
   stone_sword: {uses: {wood: 1, stone: 1}, nearby: [table], gives: 1}
   iron_sword: {uses: {wood: 1, coal: 1, iron: 1}, nearby: [table, furnace], gives: 1}
+  ship: {uses: {wood: 9}, nearby: [table], gives: 1}
 
 achievements:
   - collect_coal
@@ -128,6 +132,7 @@ achievements:
   - make_stone_sword
   - make_wood_pickaxe
   - make_wood_sword
+  - make_ship
   - place_furnace
   - place_plant
   - place_stone

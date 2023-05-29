@@ -47,6 +47,7 @@ def main():
         pygame.K_4: "make_wood_sword",
         pygame.K_5: "make_stone_sword",
         pygame.K_6: "make_iron_sword",
+        pygame.K_7: "make_ship",
     }
     print("Actions:")
     for key, action in keymap.items():
