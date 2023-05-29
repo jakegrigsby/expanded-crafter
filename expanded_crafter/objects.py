@@ -75,6 +75,7 @@ class Player(Object):
         self.action = "noop"
         self.sleeping = False
         self._last_health = self.health
+        self._on_material = "grass"
         self._hunger = 0
         self._thirst = 0
         self._fatigue = 0
@@ -82,7 +83,14 @@ class Player(Object):
 
     @property
     def texture(self):
-        if self.sleeping:
+        if self._on_material in ["water", "deepwater"]:
+            return {
+                (-1, 0): "ship-left",
+                (+1, 0): "ship-right",
+                (0, -1): "ship-up",
+                (0, +1): "ship-down",
+            }[tuple(self.facing)]
+        elif self.sleeping:
             return "player-sleep"
         return {
             (-1, 0): "player-left",
@@ -93,7 +101,10 @@ class Player(Object):
 
     @property
     def walkable(self):
-        return constants.walkable + ["lava"]
+        options = constants.walkable + ["lava"]
+        if self.inventory["ship"]:
+            options += ["water", "deepwater"]
+        return options
 
     def update(self):
         target = (self.pos[0] + self.facing[0], self.pos[1] + self.facing[1])
@@ -128,6 +139,7 @@ class Player(Object):
         # This needs to happen after the inventory states are clamped
         # because it involves the health water inventory count.
         self._wake_up_when_hurt()
+        self._on_material, _ = self.world[self.pos]
 
     def _update_life_stats(self):
         self._hunger += 0.25 if self.sleeping else 0.5
@@ -220,8 +232,6 @@ class Player(Object):
 
     def _do_material(self, target, material):
         if material == "water":
-            # TODO: Keep track of previous inventory state to do this in a more
-            # general way.
             self._thirst = 0
         info = constants.collect.get(material)
         if not info:

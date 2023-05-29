@@ -43,6 +43,7 @@ materials:
   - furnace
   - pyramid
   - ship
+  - fish
 
 walkable:
   - grass
@@ -76,6 +77,7 @@ items:
   iron_sword: {max: 9, initial: 0}
   diamond_sword: {max: 9, initial: 0}
   ship: {max: 1, initial: 0}
+  fish: {max: 9, initial: 0}
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
@@ -89,6 +91,7 @@ collect:
   diamond: {require: {iron_pickaxe: 1}, receive: {diamond: 1}, leaves: path}
   water: {require: {}, receive: {drink: 1}, leaves: water}
   grass: {require: {}, receive: {sapling: 1}, probability: 0.1, leaves: grass}
+  deepwater: {require: {ship : 1}, receive: {fish: 1}, probability: 0.1, leaves: deepwater}
 
 place:
   stone: {uses: {stone: 1}, where: [grass, sand, snow, path, water, lava, beach], type: material}
@@ -116,6 +119,7 @@ achievements:
   - collect_gold
   - collect_emerald
   - collect_cactus_fruit
+  - collect_fish
   - defeat_skeleton
   - defeat_zombie
   - eat_cow
