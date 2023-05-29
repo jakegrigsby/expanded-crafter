@@ -60,6 +60,9 @@ class Object:
         else:
             return np.array((0, np.sign(offset[1])))
 
+    def take_damage(self, damage: int):
+        self.health -= damage
+
     def random_dir(self):
         return self.all_dirs[self.random.randint(0, 4)]
 
@@ -80,6 +83,7 @@ class Player(Object):
         self._thirst = 0
         self._fatigue = 0
         self._recover = 0
+        self._armor = None
 
     @property
     def texture(self):
@@ -98,6 +102,17 @@ class Player(Object):
             (0, -1): "player-up",
             (0, +1): "player-down",
         }[tuple(self.facing)]
+
+    def take_damage(self, damage: int):
+        if self._armor == "gold":
+            damage = max(int(damage * 0.5), 1)
+        elif self._armor == "iron":
+            damage = max(int(damage * 0.25), 1)
+        elif self._armor == "diamond":
+            damage = max(int(damage * 0.1), 1)
+        elif self._armor == "magic":
+            damage = min(int(damage * 0.1), 1)
+        self.health -= damage
 
     @property
     def walkable(self):
@@ -209,21 +224,21 @@ class Player(Object):
             self.inventory["fence"] += 1
             self.achievements["collect_fence"] += 1
         if isinstance(obj, Zombie):
-            obj.health -= damage
+            obj.take_damage(damage=damage)
             if obj.health <= 0:
                 self.achievements["defeat_zombie"] += 1
         if isinstance(obj, Skeleton):
-            obj.health -= damage
+            obj.take_damage(damage=damage)
             if obj.health <= 0:
                 self.achievements["defeat_skeleton"] += 1
         if isinstance(obj, FriendlyMob):
-            obj.health -= damage
+            obj.take_damage(damage=damage)
             if obj.health <= 0:
                 self.inventory["food"] += obj.food_value
                 self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
         if isinstance(obj, NeutralMob):
-            obj.health -= damage
+            obj.take_damage(damage=damage)
             obj.angry = True
             if obj.health <= 0:
                 self.inventory["food"] += obj.food_value
@@ -418,7 +433,7 @@ class NeutralMob(Object):
                     self._cur_cooldown -= 1
                 else:
                     damage = 2 * self.damage if self.player.sleeping else self.damage
-                    self.player.health -= damage
+                    self.player.take_damage(damage)
                     self._cur_cooldown = self.cooldown
         elif self.angry and dist > self.pursuit_distance:
             # territory defended
@@ -519,7 +534,7 @@ class Zombie(Object):
                     damage = 7
                 else:
                     damage = 2
-                self.player.health -= damage
+                self.player.take_damage(damage)
                 self.cooldown = 5
 
 
@@ -583,7 +598,7 @@ class Arrow(Object):
         target = self.pos + self.facing
         material, obj = self.world[target]
         if obj:
-            obj.health -= 2
+            obj.take_damage(damage=2)
             self.world.remove(self)
         elif material not in self.walkable:
             self.world.remove(self)
@@ -616,7 +631,7 @@ class Plant(Object):
         if any(
             isinstance(obj, (Zombie, Skeleton, FriendlyMob, NeutralMob)) for obj in objs
         ):
-            self.health -= 1
+            self.take_damage(damage=1)
         if self.health <= 0:
             self.world.remove(self)
 
