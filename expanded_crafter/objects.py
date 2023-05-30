@@ -96,18 +96,18 @@ class Player(Object):
             }[tuple(self.facing)]
         elif self.sleeping:
             return "player-sleep"
-        return {
-            (-1, 0): "player-left",
-            (+1, 0): "player-right",
-            (0, -1): "player-up",
-            (0, +1): "player-down",
-        }[tuple(self.facing)]
+        else:
+            armorstr = f"{self._armor}armor" if self._armor is not None else ""
+            return {
+                (-1, 0): f"player{armorstr}-left",
+                (+1, 0): f"player{armorstr}-right",
+                (0, -1): f"player{armorstr}-up",
+                (0, +1): f"player{armorstr}-down",
+            }[tuple(self.facing)]
 
     def take_damage(self, damage: int):
-        if self._armor == "gold":
+        if self._armor == "iron":
             damage = max(int(damage * 0.5), 1)
-        elif self._armor == "iron":
-            damage = max(int(damage * 0.25), 1)
         elif self._armor == "diamond":
             damage = max(int(damage * 0.1), 1)
         elif self._armor == "magic":
@@ -289,7 +289,12 @@ class Player(Object):
             return
         for item, amount in info["uses"].items():
             self.inventory[item] -= amount
-        self.inventory[name] += info["gives"]
+
+        if "armor" in name:
+            self._armor = name.replace("_armor", "")
+        else:
+            self.inventory[name] += info["gives"]
+
         self.achievements[f"make_{name}"] += 1
 
 

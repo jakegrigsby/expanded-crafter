@@ -17,6 +17,8 @@ actions:
   - make_stone_sword
   - make_iron_sword
   - make_ship
+  - make_iron_armor
+  - make_diamond_armor
 
 materials:
   - water
@@ -107,6 +109,8 @@ make:
   stone_sword: {uses: {wood: 1, stone: 1}, nearby: [table], gives: 1}
   iron_sword: {uses: {wood: 1, coal: 1, iron: 1}, nearby: [table, furnace], gives: 1}
   ship: {uses: {wood: 9}, nearby: [table], gives: 1}
+  iron_armor: {uses: {iron: 1}, nearby: [table, furnace], gives: 1}
+  diamond_armor: {uses: {diamond: 1}, nearby: [table, furnace], gives:1}
 
 achievements:
   - collect_coal
@@ -137,6 +141,8 @@ achievements:
   - make_wood_pickaxe
   - make_wood_sword
   - make_ship
+  - make_iron_armor
+  - make_diamond_armor
   - place_furnace
   - place_plant
   - place_stone
