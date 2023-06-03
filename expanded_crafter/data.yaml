@@ -20,7 +20,9 @@ actions:
   - make_iron_armor
   - make_diamond_armor
   - make_fence
+  - make_fire
   - place_fence
+  - place_fire
 
 materials:
   - water
@@ -91,6 +93,7 @@ items:
   coin: {max: 9, initial: 0}
   wool : {max: 9, initial: 0}
   fence: {max: 9, initial: 0}
+  fire: {max: 9, initial: 0}
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
@@ -115,6 +118,7 @@ place:
   furnace: {uses: {stone: 4}, where: [grass, sand, snow, path, beach, flower], type: material}
   plant: {uses: {sapling: 1}, where: [grass], type: object}
   fence: {uses: {fence: 1}, where: [grass, sand, snow, path, beach, flower], type: object}
+  fire: {uses: {fire: 1}, where: [grass, sand, snow, path, beach], type: object}
 
 make:
   wood_pickaxe: {uses: {wood: 1}, nearby: [table], gives: 1}
@@ -127,6 +131,7 @@ make:
   iron_armor: {uses: {iron: 6}, nearby: [table, furnace], gives: 1}
   diamond_armor: {uses: {diamond: 6}, nearby: [table, furnace], gives: 1}
   fence: {uses: {wood: 2}, nearby: [table], gives: 1}
+  fire: {uses: {wood: 2, stone: 2}, nearby: [], gives: 1}
 
 
 achievements:
@@ -143,6 +148,7 @@ achievements:
   - collect_fish
   - collect_coin
   - collect_fence
+  - collect_fire
   - defeat_skeleton
   - damage_skeleton
   - defeat_zombie
@@ -175,10 +181,12 @@ achievements:
   - make_ship
   - make_iron_armor
   - make_diamond_armor
+  - make_fire
   - make_fence
   - place_furnace
   - place_plant
   - place_stone
   - place_table
   - place_fence
+  - place_fire
   - wake_up

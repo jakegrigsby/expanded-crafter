@@ -68,6 +68,7 @@ class Env(BaseClass):
                 objects.PolarBear,
                 objects.Raider,
                 objects.Fence,
+                objects.Fire,
             ],
         )
         self._step = None

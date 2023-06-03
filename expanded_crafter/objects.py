@@ -223,6 +223,10 @@ class Player(Object):
             self.world.remove(obj)
             self.inventory["fence"] += 1
             self.achievements["collect_fence"] += 1
+        if isinstance(obj, Fire):
+            self.world.remove(obj)
+            self.inventory["fire"] += 1
+            self.achievements["collect_fire"] += 1
         if isinstance(obj, Zombie):
             obj.take_damage(damage=damage)
             if obj.health <= 0:
@@ -297,6 +301,7 @@ class Player(Object):
             cls = {
                 "fence": Fence,
                 "plant": Plant,
+                "fire": Fire,
             }[name]
             self.world.add(cls(self.world, target))
         self.achievements[f"place_{name}"] += 1
@@ -699,6 +704,33 @@ class Arrow(Object):
                 self.world[target] = "path"
         else:
             self.move(self.facing)
+
+
+class Fire(Object):
+    def __init__(self, world, pos):
+        super().__init__(world, pos)
+        self.health = 5
+        self._timer = 0
+
+    @property
+    def texture(self):
+        return "fire" if self.health > 1 else "lowfire"
+
+    @property
+    def ripe(self):
+        return self.grown > 300
+
+    def update(self):
+        self._timer += 1
+        if self._timer % 100 == 0:
+            self.health -= 1
+        objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
+        if any(
+            isinstance(obj, (Zombie, Skeleton, FriendlyMob, NeutralMob)) for obj in objs
+        ):
+            self.take_damage(damage=1)
+        if self.health <= 0:
+            self.world.remove(self)
 
 
 class Plant(Object):

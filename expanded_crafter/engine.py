@@ -169,28 +169,22 @@ class LocalView:
                     continue
                 texture = self._textures.get(self._world[pos][0], unit)
                 _draw(canvas, np.array([x, y]) * unit, texture)
+
+        fire_pos = []
         for obj in self._world.objects:
             pos = obj.pos - self._center + self._offset
             if not _inside((0, 0), pos, self._grid):
                 continue
             texture = self._textures.get(obj.texture, unit)
             _draw_alpha(canvas, pos * unit, texture)
-        canvas = self._light(canvas, self._world.daylight)
+            if "fire" in obj.texture:
+                fire_pos.append(pos * unit)
+        canvas = self._light(canvas, self._world.daylight, fire_pos=fire_pos)
         if player.sleeping:
             canvas = self._sleep(canvas)
         # if player.health < 1:
         #   canvas = self._tint(canvas, (128, 0, 0), 0.6)
         return canvas
-
-    def _light(self, canvas, daylight):
-        night = canvas
-        if daylight < 0.5:
-            night = self._noise(night, 2 * (0.5 - daylight), 0.5)
-        night = np.array(
-            ImageEnhance.Color(Image.fromarray(night.astype(np.uint8))).enhance(0.4)
-        )
-        night = self._tint(night, (0, 16, 64), 0.5)
-        return daylight * canvas + (1 - daylight) * night
 
     def _sleep(self, canvas):
         canvas = np.array(
@@ -199,19 +193,35 @@ class LocalView:
         canvas = self._tint(canvas, (0, 0, 16), 0.5)
         return canvas
 
+    def _light(self, canvas, daylight, fire_pos):
+        if daylight > 0.9:
+            return canvas
+
+        darkness = np.ones_like(canvas).astype(np.float32)
+        for fire in fire_pos:
+            fire_loc = ((np.array(fire) / np.array(canvas.shape[:-1])) - 0.5) * 2.0
+            fire_loc = fire_loc[0], fire_loc[1]
+            darkness -= 1.0 - self._vignette(canvas.shape, stddev=0.5, center=fire_loc)
+
+        dark = self._tint(canvas, color=(38, 37, 54), amount=min(1.0 - daylight, 0.9))
+        fire = self._tint(
+            canvas, color=(217, 179, 76), amount=min(1.0 - daylight, 0.9) / 3
+        )
+        dark_canvas = dark * darkness + fire * (1.0 - darkness)
+
+        final = (1.0 - daylight) * (dark_canvas) + daylight * canvas
+        return final
+
     def _tint(self, canvas, color, amount):
         color = np.array(color)
         return (1 - amount) * canvas + amount * color
 
-    def _noise(self, canvas, amount, stddev):
-        noise = self._world.random.uniform(32, 127, canvas.shape[:2])[..., None]
-        mask = amount * self._vignette(canvas.shape, stddev)[..., None]
-        return (1 - mask) * canvas + mask * noise
-
     @functools.lru_cache(10)
-    def _vignette(self, shape, stddev):
+    def _vignette(self, shape, stddev, center):
+        x, y = center
         xs, ys = np.meshgrid(np.linspace(-1, 1, shape[0]), np.linspace(-1, 1, shape[1]))
-        return 1 - np.exp(-0.5 * (xs**2 + ys**2) / (stddev**2)).T
+        vig = 1 - np.exp(-0.5 * ((xs - x) ** 2 + (ys - y) ** 2) / (stddev**2)).T
+        return vig[..., np.newaxis].astype(np.float32)
 
 
 class ItemView:
