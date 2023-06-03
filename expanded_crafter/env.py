@@ -60,6 +60,7 @@ class Env(BaseClass):
                 objects.Arrow,
                 objects.Plant,
                 objects.Pig,
+                objects.Sheep,
                 objects.Camel,
                 objects.Moose,
                 objects.Penguin,
@@ -214,6 +215,18 @@ class Env(BaseClass):
             0.01,
             0.1,
             lambda pos: objects.Pig(self._world, pos),
+            lambda num, space: (0 if space < 30 else 1, 1.5 + light),
+        )
+        self._balance_object(
+            chunk,
+            objs,
+            objects.Sheep,
+            "grass",
+            5,
+            5,
+            0.01,
+            0.1,
+            lambda pos: objects.Sheep(self._world, pos),
             lambda num, space: (0 if space < 30 else 1, 1.5 + light),
         )
         self._balance_object(

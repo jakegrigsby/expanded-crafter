@@ -241,6 +241,8 @@ class Player(Object):
                 self.inventory["food"] += obj.food_value
                 self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
+                if isinstance(obj, Sheep):
+                    self.inventory["wool"] += 1
             else:
                 self.achievements[f"damage_{obj.texture}"] += 1
         if isinstance(obj, NeutralMob):
@@ -392,6 +394,19 @@ class Pig(FriendlyMob):
             sense_of_a_straight_line=0.75,
             antsy=0.4,
             food_value=4,
+        )
+
+
+class Sheep(FriendlyMob):
+    def __init__(self, world, pos):
+        super().__init__(
+            world,
+            pos,
+            texture="sheep",
+            health=4,
+            sense_of_a_straight_line=0.6,
+            antsy=0.3,
+            food_value=2,
         )
 
 

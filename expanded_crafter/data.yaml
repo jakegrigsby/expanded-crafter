@@ -50,6 +50,8 @@ materials:
   - sandcabin
   - snowcabin
   - coin
+  - wool
+  - sheep
 
 walkable:
   - grass
@@ -85,6 +87,7 @@ items:
   ship: {max: 1, initial: 0}
   fish: {max: 9, initial: 0}
   coin: {max: 9, initial: 0}
+  wool : {max: 9, initial: 0}
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
@@ -146,6 +149,8 @@ achievements:
   - damage_moose
   - eat_pig
   - damage_pig
+  - eat_sheep
+  - damage_sheep
   - eat_plant
   - eat_penguin
   - damage_penguin
