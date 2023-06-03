@@ -135,16 +135,26 @@ achievements:
   - collect_fish
   - collect_coin
   - defeat_skeleton
+  - damage_skeleton
   - defeat_zombie
+  - damage_zombie
   - defeat_raider
+  - damage_raider
   - eat_cow
+  - damage_cow
   - eat_moose
+  - damage_moose
   - eat_pig
+  - damage_pig
   - eat_plant
   - eat_penguin
+  - damage_penguin
   - eat_brown_bear
+  - damage_brown_bear
   - eat_polar_bear
+  - damage_polar_bear
   - eat_camel
+  - damage_camel
   - make_iron_pickaxe
   - make_iron_sword
   - make_stone_pickaxe

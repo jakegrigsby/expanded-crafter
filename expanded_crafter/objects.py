@@ -227,16 +227,22 @@ class Player(Object):
             obj.take_damage(damage=damage)
             if obj.health <= 0:
                 self.achievements["defeat_zombie"] += 1
+            else:
+                self.achievements["damage_zombie"] += 1
         if isinstance(obj, Skeleton):
             obj.take_damage(damage=damage)
             if obj.health <= 0:
                 self.achievements["defeat_skeleton"] += 1
+            else:
+                self.achievements["damage_skeleton"] += 1
         if isinstance(obj, FriendlyMob):
             obj.take_damage(damage=damage)
             if obj.health <= 0:
                 self.inventory["food"] += obj.food_value
                 self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
+            else:
+                self.achievements[f"damage_{obj.texture}"] += 1
         if isinstance(obj, NeutralMob):
             obj.take_damage(damage=damage)
             obj.angry = True
@@ -244,10 +250,15 @@ class Player(Object):
                 self.inventory["food"] += obj.food_value
                 self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
+            else:
+                self.achievements[f"damage_{obj.texture}"] += 1
+
         if isinstance(obj, Raider):
             obj.take_damage(damage=damage)
             if obj.health <= 0:
-                self.achievements[f"defeat_raider"] += 1
+                self.achievements["defeat_raider"] += 1
+            else:
+                self.achievements["damage_raider"] += 1
 
     def _do_material(self, target, material):
         if material == "water":
