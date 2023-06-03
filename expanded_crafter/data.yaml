@@ -119,7 +119,7 @@ make:
   wood_sword: {uses: {wood: 1}, nearby: [table], gives: 1}
   stone_sword: {uses: {wood: 1, stone: 1}, nearby: [table], gives: 1}
   iron_sword: {uses: {wood: 1, coal: 1, iron: 1}, nearby: [table, furnace], gives: 1}
-  ship: {uses: {wood: 9}, nearby: [table], gives: 1}
+  ship: {uses: {wood: 9, wool: 3}, nearby: [table], gives: 1}
   iron_armor: {uses: {iron: 6}, nearby: [table, furnace], gives: 1}
   diamond_armor: {uses: {diamond: 6}, nearby: [table, furnace], gives: 1}
 
