@@ -19,6 +19,8 @@ actions:
   - make_ship
   - make_iron_armor
   - make_diamond_armor
+  - make_fence
+  - place_fence
 
 materials:
   - water
@@ -88,6 +90,7 @@ items:
   fish: {max: 9, initial: 0}
   coin: {max: 9, initial: 0}
   wool : {max: 9, initial: 0}
+  fence: {max: 9, initial: 0}
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
@@ -107,10 +110,11 @@ collect:
   snowcabin: {require: {gold: 1}, receive: {coin: 1}, probability: 1.0, leaves: snowcabin, takes: {gold: 1}}
 
 place:
-  stone: {uses: {stone: 1}, where: [grass, sand, snow, path, water, lava, beach], type: material}
-  table: {uses: {wood: 2}, where: [grass, sand, snow, path, beach], type: material}
-  furnace: {uses: {stone: 4}, where: [grass, sand, snow, path, beach], type: material}
+  stone: {uses: {stone: 1}, where: [grass, sand, snow, path, water, lava, beach, flower], type: material}
+  table: {uses: {wood: 2}, where: [grass, sand, snow, path, beach, flower], type: material}
+  furnace: {uses: {stone: 4}, where: [grass, sand, snow, path, beach, flower], type: material}
   plant: {uses: {sapling: 1}, where: [grass], type: object}
+  fence: {uses: {fence: 1}, where: [grass, sand, snow, path, beach, flower], type: object}
 
 make:
   wood_pickaxe: {uses: {wood: 1}, nearby: [table], gives: 1}
@@ -122,6 +126,7 @@ make:
   ship: {uses: {wood: 9, wool: 3}, nearby: [table], gives: 1}
   iron_armor: {uses: {iron: 6}, nearby: [table, furnace], gives: 1}
   diamond_armor: {uses: {diamond: 6}, nearby: [table, furnace], gives: 1}
+  fence: {uses: {wood: 2}, nearby: [table], gives: 1}
 
 
 achievements:
@@ -137,6 +142,7 @@ achievements:
   - collect_cactus_fruit
   - collect_fish
   - collect_coin
+  - collect_fence
   - defeat_skeleton
   - damage_skeleton
   - defeat_zombie
@@ -169,8 +175,10 @@ achievements:
   - make_ship
   - make_iron_armor
   - make_diamond_armor
+  - make_fence
   - place_furnace
   - place_plant
   - place_stone
   - place_table
+  - place_fence
   - wake_up

@@ -732,10 +732,16 @@ class Plant(Object):
 class Fence(Object):
     def __init__(self, world, pos):
         super().__init__(world, pos)
+        self.health = 100
 
     @property
     def texture(self):
-        return "fence"
+        return "fence" if self.health > 10 else "damaged-fence"
 
     def update(self):
-        pass
+        # fences can be damaged by mobs over a long period of time and need to be replaced
+        objs = [self.world[self.pos + dir_][1] for dir_ in self.all_dirs]
+        if any(isinstance(obj, (Zombie, Skeleton)) for obj in objs):
+            self.take_damage(damage=1)
+        if self.health <= 0:
+            self.world.remove(self)
