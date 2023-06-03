@@ -123,13 +123,17 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
         if poles[x, y] and y < world.area[1] // 2:
             if simplex(x, y, 5, 7) > 0 and uniform() > 0.9:
                 world[x, y] = "pinetree"
+            elif simplex(x, y, 7, 2) > 0.65 and uniform() > 0.55:
+                world[x, y] = "snowcabin"
             else:
                 world[x, y] = "snow"
         elif poles[x, y] and y > world.area[1] // 2:
-            if simplex(x, y, 7, 5) > 0.6 and uniform() > 0.85:
+            if simplex(x, y, 7, 4) > 0.7 and uniform() > 0.85:
                 world[x, y] = "pyramid"
             elif simplex(x, y, 5, 7) > 0 and uniform() > 0.9:
                 world[x, y] = "cactus"
+            elif simplex(x, y, 7, 2) > 0.65 and uniform() > 0.55:
+                world[x, y] = "sandcabin"
             else:
                 world[x, y] = "sand"
         else:
@@ -137,6 +141,8 @@ def _set_material(world, pos, player, tunnels, poles, simplex):
                 world[x, y] = "tree"
             elif simplex(x, y, 6, 2) > 0.2 and uniform() > 0.7:
                 world[x, y] = "flower"
+            elif simplex(x, y, 7, 2) > 0.65 and uniform() > 0.5:
+                world[x, y] = "grasscabin"
             else:
                 world[x, y] = "grass"
 

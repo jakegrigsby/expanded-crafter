@@ -46,6 +46,9 @@ materials:
   - pyramid
   - ship
   - fish
+  - grasscabin
+  - sandcabin
+  - snowcabin
 
 walkable:
   - grass
