@@ -244,6 +244,10 @@ class Player(Object):
                 self.inventory["food"] += obj.food_value
                 self.achievements[f"eat_{obj.texture}"] += 1
                 self._hunger = 0
+        if isinstance(obj, Raider):
+            obj.take_damage(damage=damage)
+            if obj.health <= 0:
+                self.achievements[f"defeat_raider"] += 1
 
     def _do_material(self, target, material):
         if material == "water":

@@ -172,7 +172,7 @@ def _set_object(world, pos, player, tunnels):
         world.add(objects.BrownBear(world, (x, y), player))
     elif dist > 10 and material == "snow" and uniform() > 0.9992:
         world.add(objects.PolarBear(world, (x, y), player))
-    elif dist > 15 and uniform() > 0.9999:
+    elif dist > 15 and uniform() > 0.9998:
         world.add(objects.Raider(world, (x, y), player))
     elif material == "path" and tunnels[x, y] and uniform() > 0.96:
         world.add(objects.Skeleton(world, (x, y), player))
