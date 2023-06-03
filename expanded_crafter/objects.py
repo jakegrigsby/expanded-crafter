@@ -515,6 +515,60 @@ class PolarBear(NeutralMob):
         )
 
 
+class Raider(Object):
+    def __init__(self, world, pos, player):
+        super().__init__(world, pos)
+        self.player = player
+        self.health = 4
+        # start with cooldown so player has time to deal damage before being robbed
+        self.cooldown = 4
+        self.satisfied = 0
+
+    @property
+    def texture(self):
+        return "raider"
+
+    def update(self):
+        if self.health <= 0 or self.satisfied == 1:
+            self.world.remove(self)
+        dist = self.distance(self.player)
+
+        if self.satisfied:
+            if self.random.uniform() < 0.5:
+                self.move(self.random_dir())
+            self.satisfied -= 1
+        elif dist <= 20 and self.random.uniform() < 0.9:
+            self.move(self.toward(self.player, self.random.uniform() < 0.5))
+        else:
+            self.move(self.random_dir())
+
+        if dist <= 1 and not self.satisfied:
+            if self.cooldown:
+                self.cooldown -= 1
+            else:
+                # steal resources
+                inv = self.player.inventory
+                if inv["coin"]:
+                    inv["coin"] = 0
+                    self.satisfied = 200
+                elif inv["diamond"]:
+                    inv["diamond"] = 0
+                    self.satisfied = 200
+                elif inv["gold"]:
+                    inv["gold"] = 0
+                    self.satisfied = 200
+                elif inv["emerald"]:
+                    inv["emerald"] = 0
+                    self.satisfied = 200
+                elif inv["wood"]:
+                    inv["wood"] = 0
+                    self.satisfied = 200
+                else:
+                    # don't call the bluff
+                    self.player.take_damage(50)
+                self.cooldown = 4
+
+
 class Zombie(Object):
     def __init__(self, world, pos, player):
         super().__init__(world, pos)

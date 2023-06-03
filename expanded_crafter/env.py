@@ -65,6 +65,7 @@ class Env(BaseClass):
                 objects.Penguin,
                 objects.BrownBear,
                 objects.PolarBear,
+                objects.Raider,
             ],
         )
         self._step = None
@@ -273,6 +274,18 @@ class Env(BaseClass):
             0.004,
             0.08,
             lambda pos: objects.PolarBear(self._world, pos, self._player),
+            lambda num, space: (0 if space < 30 else 0, 1),
+        )
+        self._balance_object(
+            chunk,
+            objs,
+            objects.Raider,
+            ("grass", "snow", "sand"),
+            20,
+            20,
+            0.002,
+            0.06,
+            lambda pos: objects.Raider(self._world, pos, self._player),
             lambda num, space: (0 if space < 30 else 0, 1),
         )
 
