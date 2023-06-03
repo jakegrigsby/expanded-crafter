@@ -259,6 +259,10 @@ class Player(Object):
             for name, amount in info["receive"].items():
                 self.inventory[name] += amount
                 self.achievements[f"collect_{name}"] += 1
+        takes = info.get("takes", None)
+        if takes is not None:
+            for name, amount in takes.items():
+                self.inventory[name] -= amount
 
     def _place(self, name, target, material):
         if self.world[target][1]:
