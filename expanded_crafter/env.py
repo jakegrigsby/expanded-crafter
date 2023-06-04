@@ -59,6 +59,8 @@ class Env(BaseClass):
                 objects.Skeleton,
                 objects.Arrow,
                 objects.Plant,
+                objects.Corn,
+                objects.Berry,
                 objects.Pig,
                 objects.Sheep,
                 objects.Camel,

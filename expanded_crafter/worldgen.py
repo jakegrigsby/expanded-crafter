@@ -158,6 +158,9 @@ def _set_object(world, pos, player, tunnels):
         pass
     elif dist > 3 and material == "grass" and uniform() > 0.975:
         world.add(objects.Cow(world, (x, y)))
+    elif dist > 10 and material == "grass" and uniform() > 0.5:
+        crop = world.random.choice([objects.Plant, objects.Corn, objects.Berry])
+        world.add(crop(world, (x, y)))
     elif dist > 3 and material == "grass" and uniform() > 0.98:
         world.add(objects.Pig(world, (x, y)))
     elif dist > 4 and material == "grass" and uniform() > 0.97:

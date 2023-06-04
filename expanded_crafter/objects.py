@@ -219,6 +219,9 @@ class Player(Object):
                 obj.grown = 0
                 self.inventory["food"] += obj.food_value
                 self.achievements[f"eat_{obj.growing_texture}"] += 1
+            else:
+                self.world.remove(obj)
+            self.inventory[f"{obj.growing_texture}_seed"] += 2
         if isinstance(obj, Fence):
             self.world.remove(obj)
             self.inventory["fence"] += 1
@@ -301,6 +304,8 @@ class Player(Object):
             cls = {
                 "fence": Fence,
                 "plant": Plant,
+                "corn": Corn,
+                "berry": Berry,
                 "fire": Fire,
             }[name]
             self.world.add(cls(self.world, target))
@@ -781,6 +786,32 @@ class Plant(Crop):
             growth_period=300,
             health=1,
             food_value=4,
+        )
+
+
+class Corn(Crop):
+    def __init__(self, world, pos):
+        super().__init__(
+            world,
+            pos,
+            growing_texture="corn",
+            ripe_texture="corn-ripe",
+            growth_period=175,
+            health=3,
+            food_value=2,
+        )
+
+
+class Berry(Crop):
+    def __init__(self, world, pos):
+        super().__init__(
+            world,
+            pos,
+            growing_texture="berry",
+            ripe_texture="berry-ripe",
+            growth_period=50,
+            health=4,
+            food_value=1,
         )
 
 

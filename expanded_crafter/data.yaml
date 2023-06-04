@@ -10,6 +10,8 @@ actions:
   - place_table
   - place_furnace
   - place_plant
+  - place_corn
+  - place_berry
   - make_wood_pickaxe
   - make_stone_pickaxe
   - make_iron_pickaxe
@@ -94,6 +96,9 @@ items:
   wool : {max: 9, initial: 0}
   fence: {max: 9, initial: 0}
   fire: {max: 9, initial: 0}
+  plant_seed: {max: 9, initial: 0}
+  corn_seed: {max: 9, initial: 0}
+  berry_seed: {max: 9, initial: 0}
 
 collect:
   tree: {require: {}, receive: {wood: 1}, leaves: grass}
@@ -106,7 +111,6 @@ collect:
   emerald: {require: {stone_pickaxe: 1}, receive: {emerald: 1}, leaves: path}
   diamond: {require: {iron_pickaxe: 1}, receive: {diamond: 1}, leaves: path}
   water: {require: {}, receive: {drink: 1}, leaves: water}
-  grass: {require: {}, receive: {sapling: 1}, probability: 0.1, leaves: grass}
   deepwater: {require: {ship : 1}, receive: {fish: 1}, probability: 0.1, leaves: deepwater}
   grasscabin: {require: {fish: 1}, receive: {coin: 1}, probability: 1.0, leaves: grasscabin, takes: {fish: 1}}
   sandcabin: {require: {emerald: 1}, receive: {coin: 1}, probability: 1.0, leaves: sandcabin, takes: {emerald: 1}}
@@ -116,7 +120,9 @@ place:
   stone: {uses: {stone: 1}, where: [grass, sand, snow, path, water, lava, beach, flower], type: material}
   table: {uses: {wood: 2}, where: [grass, sand, snow, path, beach, flower], type: material}
   furnace: {uses: {stone: 4}, where: [grass, sand, snow, path, beach, flower], type: material}
-  plant: {uses: {sapling: 1}, where: [grass], type: object}
+  plant: {uses: {plant_seed: 1}, where: [grass], type: object}
+  berry: {uses: {berry_seed: 1}, where: [grass, flower], type: object}
+  corn: {uses: {corn_seed: 1}, where: [grass], type: object}
   fence: {uses: {fence: 1}, where: [grass, sand, snow, path, beach, flower], type: object}
   fire: {uses: {fire: 1}, where: [grass, sand, snow, path, beach], type: object}
 
@@ -139,7 +145,9 @@ achievements:
   - collect_diamond
   - collect_drink
   - collect_iron
-  - collect_sapling
+  - collect_plant_seed
+  - collect_berry_seed
+  - collect_corn_seed
   - collect_stone
   - collect_wood
   - collect_gold
@@ -164,6 +172,8 @@ achievements:
   - eat_sheep
   - damage_sheep
   - eat_plant
+  - eat_corn
+  - eat_berry
   - eat_penguin
   - damage_penguin
   - eat_brown_bear
@@ -185,6 +195,8 @@ achievements:
   - make_fence
   - place_furnace
   - place_plant
+  - place_corn
+  - place_berry
   - place_stone
   - place_table
   - place_fence
