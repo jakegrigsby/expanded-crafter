@@ -214,11 +214,11 @@ class Player(Object):
                 self.inventory["iron_sword"] and 5,
             ]
         )
-        if isinstance(obj, Plant):
+        if isinstance(obj, Crop):
             if obj.ripe:
                 obj.grown = 0
-                self.inventory["food"] += 4
-                self.achievements["eat_plant"] += 1
+                self.inventory["food"] += obj.food_value
+                self.achievements[f"eat_{obj.growing_texture}"] += 1
         if isinstance(obj, Fence):
             self.world.remove(obj)
             self.inventory["fence"] += 1
@@ -733,22 +733,32 @@ class Fire(Object):
             self.world.remove(self)
 
 
-class Plant(Object):
-    def __init__(self, world, pos):
+class Crop(Object):
+    def __init__(
+        self,
+        world,
+        pos,
+        growing_texture: str,
+        ripe_texture: str,
+        growth_period: int,
+        health: int,
+        food_value: int,
+    ):
         super().__init__(world, pos)
-        self.health = 1
+        self.health = health
+        self.growth_period = growth_period
+        self.growing_texture = growing_texture
+        self.ripe_texture = ripe_texture
         self.grown = 0
+        self.food_value = food_value
 
     @property
     def texture(self):
-        if self.ripe:
-            return "plant-ripe"
-        else:
-            return "plant"
+        return self.ripe_texture if self.ripe else self.growing_texture
 
     @property
     def ripe(self):
-        return self.grown > 300
+        return self.grown > self.growth_period
 
     def update(self):
         self.grown += 1
@@ -759,6 +769,19 @@ class Plant(Object):
             self.take_damage(damage=1)
         if self.health <= 0:
             self.world.remove(self)
+
+
+class Plant(Crop):
+    def __init__(self, world, pos):
+        super().__init__(
+            world,
+            pos,
+            growing_texture="plant",
+            ripe_texture="plant-ripe",
+            growth_period=300,
+            health=1,
+            food_value=4,
+        )
 
 
 class Fence(Object):
